@@ -1,0 +1,22 @@
+{{- range $i, $trigger := .Values.triggers }}
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: {{ $.Release.Name}}-t{{ $i }}
+  namespace: {{ $trigger.namespace }}
+spec:
+  broker: {{ $trigger.broker }}
+  filter:
+    attributes:
+      {{- range $extension, $value := $trigger.filterAttributes }}
+      {{ $extension }}: {{ $value }}
+      {{- end }}
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: {{ $.Release.Name }}
+      namespace: {{ $.Release.Namespace }}
+    uri: {{ $trigger.uri }}
+{{- end }}

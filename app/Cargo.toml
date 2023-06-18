@@ -1,0 +1,24 @@
+[package]
+name = "nuboxido-warp"
+version = "0.1.0"
+edition = "2021"
+
+#-------------------------------------------------
+# These should not change in order to
+# maintain compatibility with the Dockerfile
+[[bin]]
+name = "app"
+path = "src/app.rs"
+#-------------------------------------------------
+
+[dependencies]
+log = "^0.4"
+env_logger = "^0.10"
+warp = "^0.3"
+serde_json = "^1.0"
+cloudevents-sdk = { version = "^0.7.0", features = ["warp"] }
+tokio = { version = "^1.28", features = ["rt-multi-thread", "macros"] }
+uuid = "^1.3"
+
+[dev-dependencies]
+# lazy_static = "^1.4"

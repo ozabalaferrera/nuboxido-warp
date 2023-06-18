@@ -1,0 +1,41 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels: &labels
+    app: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}
+spec:
+  template:
+    metadata:
+      labels: *labels
+      annotations:
+        autoscaling.knative.dev/min-scale: "1"
+        autoscaling.knative.dev/max-scale: "10"
+        autoscaling.knative.dev/initial-scale: "1"
+        autoscaling.knative.dev/scale-down-delay: "5m"
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.service.image.repository }}:{{ .Values.service.image.tag}}
+        imagePullPolicy: {{ .Values.service.image.pullPolicy }}
+        ports:
+          - containerPort: 8080
+        env:
+        - name: HELM_RELEASE_NAME
+          value: {{ .Release.Name | quote }}
+        - name: HELM_RELEASE_REVISION
+          value: {{ .Release.Revision | quote }}
+        - name: HELM_CHART_NAME
+          value: {{ .Chart.Name | quote }}
+        - name: HELM_CHART_VERSION
+          value: {{ .Chart.Version | quote }}
+        - name: HELM_RELEASE_NAMESPACE
+          value: {{ .Release.Namespace | quote }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Name }}-env-config
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: false

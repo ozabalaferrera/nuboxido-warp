@@ -1,0 +1,38 @@
+apiVersion: skaffold/v4beta3
+kind: Config
+metadata:
+  name: &serviceName nuboxido-warp
+test:
+- image: *serviceName
+  custom:
+  - timeoutSeconds: 120
+    command: "cd app && cargo test"
+build:
+  tagPolicy:
+    gitCommit:
+      ignoreChanges: false
+  artifacts:
+  - image: *serviceName
+    docker:
+      dockerfile: Dockerfile
+      buildArgs:
+        BASE_IMAGE_BUILD: "rust:slim-bullseye"
+        BASE_IMAGE_RUN: "gcr.io/distroless/cc"
+        APP_NAME: *serviceName
+deploy:
+  helm:
+    releases:
+    - name: *serviceName
+      version: 0.1.0
+      namespace: &serviceNamespace default
+      chartPath: chart
+      valuesFiles:
+      - chart/values.yaml
+      setValueTemplates:
+        service.image.repository: "{{.IMAGE_REPO_nuboxido_warp}}"
+        service.image.tag: "{{.IMAGE_TAG_nuboxido_warp}}@{{.IMAGE_DIGEST_nuboxido_warp}}"
+      setValues:
+        image.pullPolicy: "IfNotPresent"
+        app.name: *serviceName
+        service.namespace: *serviceNamespace
+        service.replicas: 1
