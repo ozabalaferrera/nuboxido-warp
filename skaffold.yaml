@@ -29,10 +29,11 @@ deploy:
       valuesFiles:
       - chart/values.yaml
       setValueTemplates:
-        service.image.repository: "{{.IMAGE_REPO_nuboxido_warp}}"
-        service.image.tag: "{{.IMAGE_TAG_nuboxido_warp}}@{{.IMAGE_DIGEST_nuboxido_warp}}"
+        image.registry: "{{.IMAGE_DOMAIN_nuboxido_warp}}"
+        image.repository: "{{.IMAGE_REPO_NO_DOMAIN_nuboxido_warp}}"
+        image.tag: "{{.IMAGE_TAG_nuboxido_warp}}@{{.IMAGE_DIGEST_nuboxido_warp}}"
       setValues:
         image.pullPolicy: "IfNotPresent"
-        app.name: *serviceName
         service.namespace: *serviceNamespace
         service.replicas: 1
+        service.env.RUST_LOG: info

@@ -1,9 +1,26 @@
+image:
+  registry: localhost:5001
+  repository: skaffold
+  tag: v0.1.0
+  pullPolicy: "IfNotPresent"
+
 service:
   namespace: "nuboxido"
-  image:
-    repository: "localhost:5000/skaffold"
-    tag: "latest"
-    pullPolicy: "IfNotPresent"
+  annotations:
+    autoscaling.knative.dev/min-scale: "1"
+    autoscaling.knative.dev/max-scale: "10"
+    autoscaling.knative.dev/initial-scale: "1"
+    autoscaling.knative.dev/scale-down-delay: "5m"
+  scaling:
+    min:
+    max:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 400M
+    limits:
+      cpu: 500m
+      memory: 1000M
   env:
     RUST_LOG: "info"
 
@@ -12,5 +29,5 @@ triggers:
   namespace: "all-eventing"
   uri: "/"
   filterAttributes:
-  type: com.acme.events.something
-  source: com.acme.apps.ingress
+# type: com.acme.events.something
+# source: com.acme.apps.ingress

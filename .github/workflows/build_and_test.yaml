@@ -1,0 +1,17 @@
+name: build_and_test
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      working-directory: ./app
+      run: cargo build --verbose
+    - name: Run tests
+      working-directory: ./app
+      run: cargo test --verbose

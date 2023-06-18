@@ -1,5 +1,6 @@
 [package]
 name = "nuboxido-warp"
+resolver = "2"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,14 +12,32 @@ name = "app"
 path = "src/app.rs"
 #-------------------------------------------------
 
+[features]
+build-docker-image = []
+
 [dependencies]
-log = "^0.4"
-env_logger = "^0.10"
-warp = "^0.3"
-serde_json = "^1.0"
-cloudevents-sdk = { version = "^0.7.0", features = ["warp"] }
-tokio = { version = "^1.28", features = ["rt-multi-thread", "macros"] }
-uuid = "^1.3"
+log = "0.4"
+env_logger = "0.10"
+warp = "0.3"
+serde_json = "1.0"
+serde = "1.0"
+cloudevents-sdk = { version = "0.7", features = ["warp"] }
+tokio = { version = "1.32", features = ["rt-multi-thread", "macros"] }
+uuid = "1.4"
+chrono = "0.4"
+url = "2.4"
+base64 = "0.21.4"
 
 [dev-dependencies]
-# lazy_static = "^1.4"
+lazy_static = "1.4"
+nuboxido-warp = { path = ".", features = ["build-docker-image"] }
+test-with = { version = "0.10", default-features = false, features = ["executable"] }
+testcontainers = "0.14"
+reqwest = "0.11"
+cloudevents-sdk = { version = "0.7", features = ["reqwest"] }
+serde_json = "1.0"
+uuid = "1.4"
+more-asserts = "0.3"
+
+[build-dependencies]
+anyhow = "1.0"
